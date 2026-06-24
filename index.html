@@ -1,0 +1,568 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Private Students Accounts</title>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #1a1a1a, #2c3e50);
+        font-family: "Arial", sans-serif;
+        padding: 2rem 1rem; /* Fluid padding using rem */
+      }
+
+      .container {
+        width: 100%;
+        max-width: 1100px;
+        margin: auto;
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 2.5rem;
+        color: #ffffff;
+        font-size: 2.5rem;
+        text-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      }
+
+      .cards {
+        display: grid;
+        /* Uses 1fr on mobile, drops down to a minimum of 280px on larger viewports */
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+        width: 100%;
+      }
+
+      .card {
+        position: relative;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 15px;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        padding: 24px;
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease,
+          background 0.3s ease;
+      }
+
+      .card::before {
+        content: "";
+        position: absolute;
+        width: 150%;
+        height: 150%;
+        background: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.15),
+          transparent
+        );
+        transform: translate(-50%, -50%) scale(0);
+        transition: transform 0.5s ease;
+        top: 50%;
+        left: 50%;
+        pointer-events: none;
+      }
+
+      .card:hover {
+        transform: translateY(-5px);
+        background: rgba(255, 255, 255, 0.1);
+        box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4);
+      }
+
+      .card:hover::before {
+        transform: translate(-50%, -50%) scale(1);
+      }
+
+      .card h3 {
+        color: #60a5fa;
+        font-size: 1.25rem;
+        margin-bottom: 15px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: 8px;
+      }
+
+      /* FIX: Fluid Flex Wrap prevents overlapping texts on narrow screens */
+      .card p {
+        color: rgba(255, 255, 255, 0.85);
+        font-size: 0.95rem;
+        margin: 8px 0;
+        line-height: 1.5;
+        display: flex;
+        flex-wrap: wrap; /* Allows text to drop to next line if space runs out */
+        justify-content: space-between;
+        gap: 8px; /* Prevents text elements from touching */
+        word-break: break-word; /* Prevents long text from breaking layout */
+      }
+
+      .card p strong {
+        /* color: rgba(255, 255, 255, 0.6);*/
+        color: pink;
+        font-weight: 500;
+      }
+
+      /* Ensures dynamic text elements don't get squished */
+      .card p span {
+        text-align: right;
+      }
+
+      .active {
+        color: #4ade80 !important;
+        font-weight: bold;
+      }
+
+      .due {
+        color: #f87171 !important;
+        font-weight: bold;
+      }
+
+
+
+/* The animated neon border effect */
+/* Update your button styling to this: */
+#btn {
+  
+    font-size: 0.9rem;
+    padding: 10px 20px;
+    border: 2px solid #0ff;
+    background: transparent; /* Allows the background gradient to be visible */
+    color: red;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-radius: 5px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden; /* Keeps the giant 400% animation trapped inside the button border */
+    transition: 0.3s ease;
+    box-shadow: 0 0 10px #0ff, 0 0 20px rgba(0, 255, 255, 0.3);
+    margin-top: 15px;
+    display: inline-block;
+   margin: 15px auto 0 auto; /* 15px top, auto left/right, 0 bottom */
+    width: 48%;
+}
+
+#btn:hover {
+    background: #0ff;
+    color: #121212;
+    box-shadow: 0 0 20px #0ff, 0 0 40px #0ff;
+}
+
+#btn::before {
+    content: "";
+    position: absolute;
+    width: 400%;
+    height: 400%;
+    top: -150%;
+    left: -150%;
+    background: linear-gradient(45deg, #ff0000, #ff7300, #ffeb00, #00ff00, #00ffee, #0000ff, #aa00ff, #ff007b);
+    z-index: -1; /* Pushes the spinning colors behind the text */
+    animation: neon-animation 5s linear infinite;
+}
+
+@keyframes neon-animation {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+      /* Mobile Responsiveness Fine-tuning */
+      @media (max-width: 600px) {
+        h1 {
+          font-size: 1.75rem;
+          margin-bottom: 1.5rem;
+        }
+
+        .card {
+          padding: 20px;
+        }
+
+        .card p {
+          /* On ultra-small screens, switch to top-to-bottom layout for perfect reading */
+          flex-direction: column;
+          justify-content: flex-start;
+        }
+
+        .card p span {
+          text-align: left; /* Realign text to the left for mobile lists */
+        }
+      }
+      /* Ticker area wrapping the name */
+      .name-ticker {
+        overflow: hidden;
+        white-space: nowrap;
+        width: 60%; /* Adjust width as needed to fit your cards */
+        display: inline-block;
+      }
+
+      /* The element that actually moves */
+      .name-ticker span {
+    display: inline-block;
+    padding-left: 100%; /* Start the name just off the right edge */
+    
+    /* Glaze Effect Base: Linear gradient text clip */
+    background: linear-gradient(
+    120deg, 
+    #00f2fe 0%,    /* Vibrant Cyan */
+    #00f2fe 40%,   
+    #ffffff 50%,   /* White Glaze */
+    #00f2fe 60%,   
+    #00f2fe 100%   
+);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    
+    /* Combined Animations: Marquee moving left + Glaze shining */
+    animation: marquee 5s linear infinite, shine 3s linear infinite;
+}
+
+/* Pause BOTH animations on hover so it's readable */
+.card:hover .name-ticker span {
+    animation-play-state: paused;
+}
+
+/* The movement logic */
+@keyframes marquee {
+    0% { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(-100%, 0, 0); }
+}
+
+/* The glaze shine logic */
+@keyframes shine {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+      
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Private Students Accounts</h1>
+      <div class="cards">
+     
+        <!-- Student 1 Sumaiya Akter Dola -->
+       <div class="card" data-start="2026-06-06" data-vacation="8" data-previous="10">
+    <h3>Serial No: 01</h3>
+
+    <p>
+      <strong> Name:</strong>
+      <span class="name-ticker"><span>Sumaiya Akter Dola</span></span>
+    </p>
+    <p><strong>Month Started on:</strong> <span>06-06-2026</span></p>
+    <p>
+      <strong>Remaining Days:</strong> <span class="remaining"></span>
+    </p>
+    <p>
+      <strong>Vacation:</strong>
+      <span><span class="vacation-display"></span> days</span>
+    </p>
+    <p><strong>Previous Attendance:</strong> <span class="previous-display"></span></p>
+    <p><strong>Month Ends On:</strong> <span class="month-end"></span></p>
+    <p class="due"><strong>Due payment:</strong> <span>0 month</span></p>
+    <button id="btn">Details</button>
+  </div>
+          <!-- Student 2 Mst Sarra Khatun -->
+      
+<div class="card" data-start="2026-06-07" data-vacation="7" data-previous="15">
+    <h3>Serial No: 02</h3>
+
+    <p>
+      <strong> Name:</strong>
+      <span class="name-ticker"><span>Mst Sarra Khatun</span></span>
+    </p>
+    <p><strong>Month Started on:</strong> <span>07-06-2026</span></p>
+    <p>
+      <strong>Remaining Days:</strong> <span class="remaining"></span>
+    </p>
+    <p>
+      <strong>Vacation:</strong>
+      <span><span class="vacation-display"></span> days</span>
+    </p>
+    <p><strong>Previous Attendance:</strong><span class="previous-display">days</span></p>
+    <p><strong>Month Ends On:</strong> <span class="month-end"></span></p>
+    <p class="due"><strong>Due payment:</strong> <span>0 month</span></p>
+    <button id="btn">Details</button>
+  </div>
+    <!-- Student 3 Mst Tasbiha Khatun -->
+      
+    <div class="card" data-start="2026-06-06" data-vacation="7" data-previous="">
+    <h3>Serial No: 03</h3>
+
+    <p>
+      <strong> Name:</strong>
+      <span class="name-ticker"><span>Mst Tasbiha Khatun</span></span>
+    </p>
+    <p><strong>Month Started on:</strong> <span>06-06-2026</span></p>
+    <p>
+      <strong>Remaining Days:</strong> <span class="remaining"></span>
+    </p>
+    <p>
+      <strong>Vacation:</strong>
+      <span><span class="vacation-display"></span> days</span>
+    </p>
+    <p><strong>Previous Attendance:</strong><span class="previous-display">days</span></p>
+    <p><strong>Month Ends On:</strong> <span class="month-end"></span></p>
+    <p class="due"><strong>Due payment:</strong> <span>1 month</span></p>
+    <button id="btn">Details</button>
+  </div>
+
+  <!-- Student 4 Md Ismail -->
+
+   <div class="card" data-start="2026-06-06" data-vacation="7" data-previous="">
+    <h3>Serial No: 04</h3>
+
+    <p>
+      <strong> Name:</strong>
+      <span class="name-ticker"><span>Md Ismail</span></span>
+    </p>
+    <p><strong>Month Started on:</strong> <span>06-06-2026</span></p>
+    <p>
+      <strong>Remaining Days:</strong> <span class="remaining"></span>
+    </p>
+    <p>
+      <strong>Vacation:</strong>
+      <span><span class="vacation-display"></span> days</span>
+    </p>
+    <p><strong>Previous Attendance:</strong><span class="previous-display">days</span></p>
+    <p><strong>Month Ends On:</strong> <span class="month-end"></span></p>
+    <p class="due"><strong>Due payment:</strong> <span>1 month</span></p>
+    <button id="btn">Details</button>
+  </div>
+
+   <!-- Student 5 Nur-Alam(Alishapur) -->
+
+   <div class="card" data-start="2026-06-09" data-vacation="7" data-previous="15">
+    <h3>Serial No: 05</h3>
+
+    <p>
+      <strong> Name:</strong>
+      <span class="name-ticker"><span> Nur-Alam(Alishapur)</span></span>
+    </p>
+    <p><strong>Month Started on:</strong> <span>09-06-2026</span></p>
+    <p>
+      <strong>Remaining Days:</strong> <span class="remaining"></span>
+    </p>
+    <p>
+      <strong>Vacation:</strong>
+      <span><span class="vacation-display"></span> days</span>
+    </p>
+    <p><strong>Previous Attendance:</strong><span class="previous-display">days</span></p>
+    <p><strong>Month Ends On:</strong> <span class="month-end"></span></p>
+    <p class="due"><strong>Due payment:</strong> <span>0 month</span></p>
+    <button id="btn">Details</button>
+  </div>
+
+ <!-- Student 6 Md Minhaz -->
+
+   <div class="card" data-start="2026-06-22" data-vacation="" data-previous="">
+    <h3>Serial No: 06</h3>
+
+    <p>
+      <strong> Name:</strong>
+      <span class="name-ticker"><span>Md Minhaz</span></span>
+    </p>
+    <p><strong>Month Started on:</strong> <span>22-06-2026</span></p>
+    <p>
+      <strong>Remaining Days:</strong> <span class="remaining"></span>
+    </p>
+    <p>
+      <strong>Vacation:</strong>
+      <span><span class="vacation-display"></span> days</span>
+    </p>
+    <p><strong>Previous Attendance:</strong><span class="previous-display">days</span></p>
+    <p><strong>Month Ends On:</strong> <span class="month-end"></span></p>
+    <p class="due"><strong>Due payment:</strong> <span>0 month</span></p>
+    <button id="btn">Details</button>
+  </div>
+
+   <!-- Student 7 Tamim -->
+
+   <div class="card" data-start="2026-06-10" data-vacation="7" data-previous="">
+    <h3>Serial No: 07</h3>
+
+    <p>
+      <strong> Name:</strong>
+      <span class="name-ticker"><span>Md Tamim</span></span>
+    </p>
+    <p><strong>Month Started on:</strong> <span>10-06-2026</span></p>
+    <p>
+      <strong>Remaining Days:</strong> <span class="remaining"></span>
+    </p>
+    <p>
+      <strong>Vacation:</strong>
+      <span><span class="vacation-display"></span> days</span>
+    </p>
+    <p><strong>Previous Attendance:</strong><span class="previous-display">days</span></p>
+    <p><strong>Month Ends On:</strong> <span class="month-end"></span></p>
+    <p class="due"><strong>Due payment:</strong> <span>0 month</span></p>
+    <button id="btn">Details</button>
+  </div>
+
+   <!-- Student 8 Shreemati Radha Kumari -->
+
+   <div class="card" data-start="2026-06-06" data-vacation="9" data-previous="8">
+    <h3>Serial No: 08</h3>
+
+    <p>
+      <strong> Name:</strong>
+      <span class="name-ticker"><span>Shreemati Radha Kumari</span></span>
+    </p>
+    <p><strong>Month Started on:</strong> <span>06-06-2026</span></p>
+    <p>
+      <strong>Remaining Days:</strong> <span class="remaining"></span>
+    </p>
+    <p>
+      <strong>Vacation:</strong>
+      <span><span class="vacation-display"></span> days</span>
+    </p>
+    <p><strong>Previous Attendance:</strong><span class="previous-display">days</span></p>
+    <p><strong>Month Ends On:</strong> <span class="month-end"></span></p>
+    <p class="due"><strong>Due payment:</strong> <span> 1 month</span></p>
+    <button id="btn">Details</button>
+  </div>
+
+   <!-- Student 9 Asmaul -->
+
+   <div class="card" data-start="2026-06-25" data-vacation="" data-previous="">
+    <h3>Serial No: 09</h3>
+
+    <p>
+      <strong> Name:</strong>
+      <span class="name-ticker"><span>Md Asmaul</span></span>
+    </p>
+    <p><strong>Month Started on:</strong> <span>25-06-2026</span></p>
+    <p>
+      <strong>Remaining Days:</strong> <span class="remaining"></span>
+    </p>
+    <p>
+      <strong>Vacation:</strong>
+      <span><span class="vacation-display"></span> days</span>
+    </p>
+    <p><strong>Previous Attendance:</strong><span class="previous-display">days</span></p>
+    <p><strong>Month Ends On:</strong> <span class="month-end"></span></p>
+    <p class="due"><strong>Due payment:</strong> <span>0 month</span></p>
+    <button id="btn">Details</button>
+  </div>
+
+   <!-- Student 10 Md Ismail -->
+
+   <div class="card" data-start="2026-06-24" data-vacation="" data-previous="">
+    <h3>Serial No: 10</h3>
+
+    <p>
+      <strong> Name:</strong>
+      <span class="name-ticker"><span>Md Abdullah</span></span>
+    </p>
+    <p><strong>Month Started on:</strong> <span>24-06-2026</span></p>
+    <p>
+      <strong>Remaining Days:</strong> <span class="remaining"></span>
+    </p>
+    <p>
+      <strong>Vacation:</strong>
+      <span><span class="vacation-display"></span> days</span>
+    </p>
+    <p><strong>Previous Attendance:</strong><span class="previous-display">days</span></p>
+    <p><strong>Month Ends On:</strong> <span class="month-end"></span></p>
+    <p class="due"><strong>Due payment:</strong> <span>0 month</span></p>
+    <button id="btn">Details</button>
+  </div>
+
+   <!-- Student 11 Abdil Bashar -->
+
+   <div class="card" data-start="2026-06-24" data-vacation="" data-previous="">
+    <h3>Serial No: 11</h3>
+
+    <p>
+      <strong> Name:</strong>
+      <span class="name-ticker"><span>Abdul Bashar</span></span>
+    </p>
+    <p><strong>Month Started on:</strong> <span>24-06-2026</span></p>
+    <p>
+      <strong>Remaining Days:</strong> <span class="remaining"></span>
+    </p>
+    <p>
+      <strong>Vacation:</strong>
+      <span><span class="vacation-display"></span> days</span>
+    </p>
+    <p><strong>Previous Attendance:</strong><span class="previous-display">days</span></p>
+    <p><strong>Month Ends On:</strong> <span class="month-end"></span></p>
+    <p class="due"><strong>Due payment:</strong> <span>0 month</span></p>
+    <button id="btn">Details</button>
+  </div>
+      </div>
+    </div>
+
+    <script>
+      const today = new Date();
+today.setHours(0, 0, 0, 0);
+
+document.querySelectorAll(".card").forEach((card) => {
+  const startDate = new Date(card.dataset.start);
+  const vacationDays = Number(card.dataset.vacation || 0);
+  const previousAttendance = Number(card.dataset.previous || 0); // Get previous attendance
+  
+  let endDate = new Date(startDate);
+
+  // 1. Calculate standard 1-month duration
+  endDate.setMonth(endDate.getMonth() + 1);
+  endDate.setDate(endDate.getDate() - 1);
+  
+  // 2. Add vacation days (extends the month)
+  endDate.setDate(endDate.getDate() + vacationDays);
+  
+  // 3. Deduct previous attendance (shortens the month)
+  endDate.setDate(endDate.getDate() - previousAttendance);
+  
+  endDate.setHours(0, 0, 0, 0);
+
+  // Calculate remaining days from today until the modified endDate
+  const diffTime = endDate - today;
+  const daysLeft = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  const remaining = card.querySelector(".remaining");
+
+  if (!isFinite(daysLeft) || daysLeft <= 0) {
+    remaining.textContent = "Payment Due";
+    remaining.classList.add("due");
+  } else {
+    remaining.textContent = daysLeft + " days";
+    remaining.classList.add("active");
+  }
+
+  // Update DOM displays
+  card.querySelector(".vacation-display").textContent = vacationDays;
+  card.querySelector(".previous-display").textContent = `${previousAttendance.toString().padStart('0')} days`;
+  card.querySelector(".month-end").textContent = endDate.toLocaleDateString("en-GB");
+});
+      // Grab the button element
+const detailsBtn = document.getElementById("btn");
+
+if (detailsBtn) {
+    detailsBtn.addEventListener("click", function() {
+        // Find the parent card to pull student data dynamically
+        const card = this.closest(".card");
+        const studentName = card.querySelector(".name-ticker span").textContent;
+        const remainingDays = card.querySelector(".remaining").textContent;
+        const endsOn = card.querySelector(".month-end").textContent;
+        
+        // Display a clean info message box
+        alert(`Student Profile:\n----------------------\nName: ${studentName}\nStatus: ${remainingDays}\nCycle Ends On: ${endsOn}`);
+    });
+}
+    </script>
+  </body>
+</html>
